@@ -4,12 +4,11 @@ from google import genai
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from dotenv import load_dotenv  # <--- [추가됨] 1. 라이브러리 불러오기
+from dotenv import load_dotenv
+from datetime import datetime
+from jinja2 import Template
 
-# ==========================================
-# 0. .env 파일 로드 (환경 변수 강제 주입)
-# ==========================================
-load_dotenv('impormation.env')  # <--- [추가됨] 2. 이제 .env 파일 내용을 강제로 읽어옵니다.
+load_dotenv('impormation.env') #.env 파일 로드 (환경 변수 강제 주입)
 
 # ==========================================
 # 1. 안정적인 RSS 피드 기반 뉴스 수집
@@ -99,4 +98,42 @@ if __name__ == "__main__":
         print("\n[LLM 요약 결과]\n", final_summary, "\n")
         send_email(final_summary)
     else:
+
         print("뉴스를 가져오지 못했습니다.")
+        
+def send_email(summary_text):
+    print("📧 HTML 뉴스레터를 이메일로 발송합니다...")
+    
+    sender_email = os.getenv("SENDER_EMAIL")       
+    sender_password = os.getenv("EMAIL_PASSWORD")  
+    receiver_email = sender_email 
+    
+    if not sender_email or not sender_password:
+        return
+        
+    # 1. HTML 템플릿 읽기
+    with open("template.html", "r", encoding="utf-8") as f:
+        template_html = f.read()
+    
+    # 2. Jinja2를 이용해 데이터 매핑
+    template = Template(template_html)
+    now = datetime.now().strftime("%Y년 %m월 %d일")
+    html_content = template.render(date=now, summary=summary_text)
+    
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = f"[일간 IT 트렌드] {now} 리포트 🤖"
+    
+    # 중요: plain 대신 'html'로 설정하여 발송
+    msg.attach(MIMEText(html_content, 'html', 'utf-8'))
+    
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+        server.quit()
+        print("✅ HTML 뉴스레터 발송 성공!")
+    except Exception as e:
+        print(f"❌ 발송 실패: {e}")
