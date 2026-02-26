@@ -8,7 +8,10 @@ from dotenv import load_dotenv
 from datetime import datetime
 from jinja2 import Template
 
-load_dotenv('impormation.env') #.env 파일 로드 (환경 변수 강제 주입)
+# ==========================================
+# 0. .env 파일 로드 (로컬 테스트용)
+# ==========================================
+load_dotenv('impormation.env') 
 
 # ==========================================
 # 1. 안정적인 RSS 피드 기반 뉴스 수집
@@ -32,11 +35,10 @@ def summarize_news_with_llm(news_text):
     print("🤖 최신 Gemini API를 호출하여 요약을 진행합니다...")
     
     api_key = os.getenv("GEMINI_API_KEY")
-    # 디버깅용: 키가 제대로 읽혔는지 확인 (보안상 앞 5자리만 출력)
     if api_key:
         print(f"   -> API Key 인식 성공: {api_key[:5]}...")
     else:
-        return "❌ 오류: .env 파일에서 GEMINI_API_KEY를 찾을 수 없습니다."
+        return "❌ 오류: 환경 변수에서 GEMINI_API_KEY를 찾을 수 없습니다."
         
     client = genai.Client(api_key=api_key)
     
@@ -57,54 +59,8 @@ def summarize_news_with_llm(news_text):
     return response.text
 
 # ==========================================
-# 3. 요약 결과를 이메일로 발송
+# 3. 요약 결과를 'HTML 형태'로 이메일 발송
 # ==========================================
-def send_email(summary_text):
-    print("📧 요약된 뉴스를 이메일로 발송합니다...")
-    
-    sender_email = os.getenv("SENDER_EMAIL")       
-    sender_password = os.getenv("EMAIL_PASSWORD")  
-    receiver_email = sender_email # 테스트용: 나에게 보내기
-    
-    if not sender_email or not sender_password:
-        print("⚠️ .env 파일에서 이메일 정보를 찾을 수 없습니다.")
-        return
-        
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
-    msg['Subject'] = "[일간 IT 트렌드] 오늘의 핵심 뉴스 요약 봇 🤖"
-    
-    msg.attach(MIMEText(summary_text, 'plain', 'utf-8'))
-    
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.send_message(msg)
-        server.quit()
-        print("✅ 이메일 발송 성공! 메일함을 확인해 보세요.")
-    except Exception as e:
-        print(f"❌ 이메일 발송 실패: {e}")
-
-# ==========================================
-# 메인 파이프라인 실행
-# ==========================================
-if __name__ == "__main__":
-    # 1. RSS 뉴스 수집
-    crawled_data = get_it_news_rss()
-    
-    if crawled_data:
-        # 2. AI 요약 (기존과 동일)
-        final_summary = summarize_news_with_llm(crawled_data)
-        print("\n[LLM 요약 결과]\n", final_summary, "\n")
-        
-        # 3. 드디어! 업그레이드된 HTML 이메일 발송 함수 호출
-        # (이 함수 내부에서 template.html을 읽어서 처리하게 됩니다)
-        send_email(final_summary) 
-        
-    else:
-        print("뉴스를 가져오지 못했습니다.")
 def send_email(summary_text):
     print("📧 HTML 뉴스레터를 이메일로 발송합니다...")
     
@@ -113,11 +69,16 @@ def send_email(summary_text):
     receiver_email = sender_email 
     
     if not sender_email or not sender_password:
+        print("⚠️ 환경 변수에서 이메일 정보를 찾을 수 없습니다.")
         return
         
     # 1. HTML 템플릿 읽기
-    with open("template.html", "r", encoding="utf-8") as f:
-        template_html = f.read()
+    try:
+        with open("template.html", "r", encoding="utf-8") as f:
+            template_html = f.read()
+    except FileNotFoundError:
+        print("❌ 오류: 'template.html' 파일을 찾을 수 없습니다. 같은 폴더에 있는지 확인하세요.")
+        return
     
     # 2. Jinja2를 이용해 데이터 매핑
     template = Template(template_html)
@@ -138,7 +99,22 @@ def send_email(summary_text):
         server.login(sender_email, sender_password)
         server.send_message(msg)
         server.quit()
-        print("✅ HTML 뉴스레터 발송 성공!")
+        print("✅ HTML 뉴스레터 발송 성공! 메일함을 확인하세요.")
     except Exception as e:
         print(f"❌ 발송 실패: {e}")
 
+# ==========================================
+# 4. 메인 파이프라인 실행 (반드시 맨 아래에 위치!)
+# ==========================================
+if __name__ == "__main__":
+    crawled_data = get_it_news_rss()
+    
+    if crawled_data:
+        final_summary = summarize_news_with_llm(crawled_data)
+        print("\n[LLM 요약 결과]\n", final_summary, "\n")
+        
+        # 이제 여기서 제대로 된 새 HTML 버전을 호출합니다!
+        send_email(final_summary) 
+        
+    else:
+        print("뉴스를 가져오지 못했습니다.")
