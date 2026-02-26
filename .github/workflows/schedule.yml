@@ -1,0 +1,33 @@
+name: Daily IT News Bot
+
+on:
+  schedule:
+    # 깃허브 서버는 영국 시간(UTC) 기준이라 한국 시간(KST)보다 9시간 느림
+    # 한국 아침 8시 = UTC 전날 밤 11시 (23:00)
+    - cron: '0 23 * * *'
+  workflow_dispatch: # 즉시 실행
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # 깃허브가 제공하는 무료 리눅스 서버를 빌림
+
+    steps:
+    - name: 1. 내 깃허브 코드 불러오기
+      uses: actions/checkout@v4
+
+    - name: 2. 파이썬 환경 세팅하기
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: 3. 필요 라이브러리 설치하기 (requirements.txt)
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: 4. 대망의 파이썬 스크립트 실행! (금고에서 암호 꺼내오기)
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      run: python main.py
