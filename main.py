@@ -12,9 +12,7 @@ import urllib.parse  # 검색어 변환용
 
 load_dotenv('impormation.env') 
 
-# ==========================================
 # 1. RSS 피드 수집 (검색어 동적 적용)
-# ==========================================
 def get_news_rss(query):
     print(f"📰 구글 뉴스 검색어: [{query}] 피드를 가져옵니다...")
     # 한글 검색어가 URL에서 깨지지 않도록 인코딩
@@ -28,11 +26,9 @@ def get_news_rss(query):
         return None
     return "\n".join(news_list)
 
-# ==========================================
-# 2. AI 요약 (카테고리 맞춤형 프롬프트)
-# ==========================================
+# 2. AI 요약
 def summarize_news_with_llm(category, news_text):
-    print(f"🤖 [{category}] 분야 요약을 진행합니다...")
+    print(f" [{category}] 분야 요약을 진행합니다...")
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         return "❌ 오류: GEMINI_API_KEY를 찾을 수 없습니다."
@@ -52,9 +48,7 @@ def summarize_news_with_llm(category, news_text):
     response = client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
     return response.text
 
-# ==========================================
 # 3. DB 저장 및 이메일 발송 
-# ==========================================
 def save_to_supabase(category, summary_text):
     print(f"🗄️ Supabase DB에 [{category}] 요약본 저장 중...")
     url = os.getenv("SUPABASE_URL")
@@ -67,9 +61,9 @@ def save_to_supabase(category, summary_text):
         supabase: Client = create_client(url, key)
         data = {"category": category, "summary_text": summary_text}
         supabase.table("news_summaries").insert(data).execute()
-        print(f"✅ [{category}] DB 저장 성공!")
+        print(f"[{category}] DB 저장 성공!")
     except Exception as e:
-        print(f"❌ DB 저장 실패: {e}")
+        print(f" DB 저장 실패: {e}")
 
 def send_email(full_summary_html):
     print("📧 통합 HTML 뉴스레터를 발송합니다...")
@@ -99,13 +93,12 @@ def send_email(full_summary_html):
         server.login(sender_email, sender_password)
         server.send_message(msg)
         server.quit()
-        print("✅ 이메일 발송 완료!")
+        print(" 이메일 발송 완료!")
     except Exception as e:
-        print(f"❌ 발송 실패: {e}")
+        print(f" 발송 실패: {e}")
 
-# ==========================================
+
 # 4. 메인 파이프라인 (자동화 루프)
-# ==========================================
 if __name__ == "__main__":
     # 우리가 원하는 카테고리와 구글 뉴스 검색어(키워드) 세팅
     target_categories = {
@@ -124,7 +117,7 @@ if __name__ == "__main__":
             # 2. 카테고리별 요약
             summary = summarize_news_with_llm(category, crawled_data)
             
-            # 3. 카테고리별 DB 저장 (스트림릿 탭과 정확히 이름이 일치해야 합니다!)
+            # 3. 카테고리별 DB 저장
             save_to_supabase(category, summary)
             
             # 4. 메일 내용에 추가하기 (HTML 태그로 영역 구분)
@@ -133,4 +126,5 @@ if __name__ == "__main__":
     # 모든 카테고리를 순회한 후, 하나로 합쳐진 메일 발송!
     if email_content_builder:
         send_email(email_content_builder)
+
 
