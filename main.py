@@ -8,14 +8,9 @@ from dotenv import load_dotenv
 from datetime import datetime
 from jinja2 import Template
 
-# ==========================================
-# 0. .env 파일 로드 (로컬 테스트용)
-# ==========================================
 load_dotenv('impormation.env') 
 
-# ==========================================
-# 1. 안정적인 RSS 피드 기반 뉴스 수집
-# ==========================================
+# RSS 피드 기반 데이터 수집
 def get_it_news_rss():
     print("📰 구글 뉴스(IT/과학) RSS 피드를 가져옵니다...")
     url = "https://news.google.com/rss/search?q=IT+기술+when:1d&hl=ko&gl=KR&ceid=KR:ko"
@@ -28,17 +23,15 @@ def get_it_news_rss():
         
     return "\n".join(news_list)
 
-# ==========================================
-# 2. 최신 SDK(google.genai)를 이용한 요약
-# ==========================================
+# 최신 SDK GEminiAPI 호출
 def summarize_news_with_llm(news_text):
-    print("🤖 최신 Gemini API를 호출하여 요약을 진행합니다...")
+    print("최신 Gemini API를 호출하여 요약을 진행합니다...")
     
     api_key = os.getenv("GEMINI_API_KEY")
     if api_key:
         print(f"   -> API Key 인식 성공: {api_key[:5]}...")
     else:
-        return "❌ 오류: 환경 변수에서 GEMINI_API_KEY를 찾을 수 없습니다."
+        return " 오류: 환경 변수에서 GEMINI_API_KEY를 찾을 수 없습니다."
         
     client = genai.Client(api_key=api_key)
     
@@ -58,11 +51,9 @@ def summarize_news_with_llm(news_text):
     
     return response.text
 
-# ==========================================
-# 3. 요약 결과를 'HTML 형태'로 이메일 발송
-# ==========================================
+# 3. 요약 결과를 HTML 형태로 이메일 발송
 def send_email(summary_text):
-    print("📧 HTML 뉴스레터를 이메일로 발송합니다...")
+    print("HTML 뉴스레터를 이메일로 발송합니다...")
     
     sender_email = os.getenv("SENDER_EMAIL")       
     sender_password = os.getenv("EMAIL_PASSWORD")  
@@ -74,38 +65,7 @@ def send_email(summary_text):
         
     # 1. HTML 템플릿 읽기
     try:
-        with open("template.html", "r", encoding="utf-8") as f:
-            template_html = f.read()
-    except FileNotFoundError:
-        print("❌ 오류: 'template.html' 파일을 찾을 수 없습니다. 같은 폴더에 있는지 확인하세요.")
-        return
-    
-    # 2. Jinja2를 이용해 데이터 매핑
-    template = Template(template_html)
-    now = datetime.now().strftime("%Y년 %m월 %d일")
-    html_content = template.render(date=now, summary=summary_text)
-    
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
-    msg['Subject'] = f"[일간 IT 트렌드] {now} 리포트 🤖"
-    
-    # 중요: plain 대신 'html'로 설정하여 발송
-    msg.attach(MIMEText(html_content, 'html', 'utf-8'))
-    
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.send_message(msg)
-        server.quit()
-        print("✅ HTML 뉴스레터 발송 성공! 메일함을 확인하세요.")
-    except Exception as e:
-        print(f"❌ 발송 실패: {e}")
-
-# ==========================================
-# 4. 메인 파이프라인 실행 (반드시 맨 아래에 위치!)
-# ==========================================
+        with open("template.html",행
 if __name__ == "__main__":
     crawled_data = get_it_news_rss()
     
@@ -118,3 +78,4 @@ if __name__ == "__main__":
         
     else:
         print("뉴스를 가져오지 못했습니다.")
+
