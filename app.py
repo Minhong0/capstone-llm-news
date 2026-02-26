@@ -1,81 +1,61 @@
 import streamlit as st
-from datetime import datetime
+from supabase import create_client, Client
 
 # ==========================================
-# 1. 페이지 기본 설정 (브라우저 탭 이름, 레이아웃 넓게)
+# 1. 페이지 기본 설정
 # ==========================================
-st.set_page_config(
-    page_title="Daily Trend AI",
-    page_icon="📰",
-    layout="centered" # 모바일에서도 보기 좋게 중앙 정렬
-)
+st.set_page_config(page_title="Daily Trend AI", page_icon="📰", layout="centered")
 
 # ==========================================
-# 2. 가짜 데이터 (Mock Data) 생성
-# 나중에 이 부분을 Supabase DB에서 불러오는 코드로 바꿀 겁니다!
+# 2. Supabase DB 연결 (스트림릿 비밀 금고 사용)
 # ==========================================
-mock_db = {
-    "IT/과학": """
-    * **애플, 새로운 M4 칩셋 공개**: AI 성능이 대폭 향상된 새로운 프로세서를 발표하며 맥북 라인업 업데이트를 예고했습니다.
-    * **오픈AI, GPT-5 출시 임박**: 기존 모델보다 추론 능력이 비약적으로 상승한 차세대 LLM의 테스트가 마무리 단계에 접어들었습니다.
-    * **국내 우주항공청 정식 출범**: 한국형 나사(NASA) 역할을 할 우주항공청이 사천에서 본격적인 업무를 시작했습니다.
-    """,
-    "게임/e스포츠": """
-    * **리그 오브 레전드, 대규모 패치**: 새로운 챔피언 합류와 함께 랭크 시스템이 대폭 개편되어 유저들의 호응을 얻고 있습니다.
-    * **로스트아크, 신규 레이드 업데이트**: 여름 시즌을 맞아 역대급 난이도의 군단장 레이드가 추가되었습니다.
-    * **스팀(Steam) 여름 할인 시작**: 역대 최다 게임이 참여하는 여름 할인이 시작되어 게이머들의 지갑을 위협하고 있습니다.
-    """,
-    "경제/주식": """
-    * **엔비디아 주가 사상 최고치 경신**: AI 반도체 수요 폭발로 인해 시가총액 1위를 달성했습니다.
-    * **한국은행, 기준금리 동결**: 물가 상승 압력과 가계 부채를 고려하여 기준금리를 현 수준으로 유지하기로 결정했습니다.
-    """
-}
+@st.cache_resource # DB 연결을 캐싱해서 사이트 속도를 높여줍니다.
+def init_connection():
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+    return create_client(url, key)
+
+supabase = init_connection()
 
 # ==========================================
-# 3. 웹페이지 UI 구성
+# 3. DB에서 가장 최근 뉴스 꺼내오기 함수
 # ==========================================
-# 메인 헤더
+@st.cache_data(ttl=600) # 10분마다 새로고침 (무료 서버 과부하 방지)
+def get_latest_news(category):
+    try:
+        # DB에서 해당 카테고리의 최신 글 1개를 가져옵니다.
+        response = supabase.table("news_summaries").select("*").eq("category", category).order("created_at", desc=True).limit(1).execute()
+        
+        if response.data:
+            return response.data[0]['summary_text']
+        else:
+            return "아직 요약된 뉴스가 없습니다. 😅 (내일 아침을 기대해 주세요!)"
+    except Exception as e:
+        return f"데이터를 불러오는 중 오류가 발생했습니다: {e}"
+
+# ==========================================
+# 4. 웹페이지 UI 구성
+# ==========================================
 st.title("🚀 AI Daily Trend Report")
-st.markdown(f"**오늘의 날짜:** {datetime.now().strftime('%Y년 %m월 %d일')}")
-st.divider() # 가로 줄 긋기
+st.divider() 
 
-# 안내 메시지
-st.info("💡 카테고리를 탭하여 오늘 아침에 요약된 핵심 트렌드를 확인하세요.")
-
-# 탭(Tab) 메뉴 만들기
+# 탭 메뉴
 tab1, tab2, tab3 = st.tabs(["💻 IT/과학", "🎮 게임/e스포츠", "📈 경제/주식"])
 
-# 각 탭에 들어갈 내용 세팅
 with tab1:
     st.subheader("오늘의 IT/과학 트렌드")
-    st.info("Gemini 2.5 Flash 모델이 1분 만에 읽을 수 있도록 요약했습니다.")
-    st.markdown(mock_db["IT/과학"])
+    st.info("AI가 1분 만에 읽을 수 있도록 요약했습니다.")
+    # DB에서 IT/과학 뉴스 꺼내오기!
+    it_news = get_latest_news("IT/과학")
+    st.markdown(it_news)
 
 with tab2:
     st.subheader("오늘의 게임/e스포츠 트렌드")
-    st.markdown(mock_db["게임/e스포츠"])
+    # 아직 파이썬이 게임 뉴스는 안 만들었으니 '없음'으로 뜰 겁니다.
+    game_news = get_latest_news("게임/e스포츠")
+    st.markdown(game_news)
 
 with tab3:
     st.subheader("오늘의 경제/주식 트렌드")
-    st.markdown(mock_db["경제/주식"])
-
-# ==========================================
-# 4. 사이드바 (구독 설정 기능 뼈대)
-# ==========================================
-with st.sidebar:
-    st.header("🔔 알림 설정")
-    st.write("원하는 뉴스만 쏙쏙 골라 챗봇으로 받으세요!")
-    
-    # 체크박스 UI
-    want_it = st.checkbox("💻 IT/과학 뉴스")
-    want_game = st.checkbox("🎮 게임 뉴스")
-    want_econ = st.checkbox("📈 경제 뉴스")
-    
-    # 시간 설정 UI
-    alarm_time = st.time_input("알림 받을 시간", datetime.strptime("08:00", "%H:%M"))
-    
-    # 디스코드/카톡 아이디 입력 UI
-    user_id = st.text_input("디스코드 Webhook URL 또는 ID")
-    
-    if st.button("구독하기", use_container_width=True):
-        st.success("구독 설정이 DB에 저장되었습니다! (테스트)")
+    econ_news = get_latest_news("경제/주식")
+    st.markdown(econ_news)
