@@ -91,16 +91,20 @@ def send_email(summary_text):
 # 메인 파이프라인 실행
 # ==========================================
 if __name__ == "__main__":
+    # 1. RSS 뉴스 수집
     crawled_data = get_it_news_rss()
     
     if crawled_data:
+        # 2. AI 요약 (기존과 동일)
         final_summary = summarize_news_with_llm(crawled_data)
         print("\n[LLM 요약 결과]\n", final_summary, "\n")
-        send_email(final_summary)
-    else:
-
-        print("뉴스를 가져오지 못했습니다.")
         
+        # 3. 드디어! 업그레이드된 HTML 이메일 발송 함수 호출
+        # (이 함수 내부에서 template.html을 읽어서 처리하게 됩니다)
+        send_email(final_summary) 
+        
+    else:
+        print("뉴스를 가져오지 못했습니다.")
 def send_email(summary_text):
     print("📧 HTML 뉴스레터를 이메일로 발송합니다...")
     
@@ -137,3 +141,4 @@ def send_email(summary_text):
         print("✅ HTML 뉴스레터 발송 성공!")
     except Exception as e:
         print(f"❌ 발송 실패: {e}")
+
