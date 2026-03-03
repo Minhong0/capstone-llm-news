@@ -66,6 +66,7 @@ with st.sidebar:
     # 2. QR 코드 이미지 띄우기 (다운받은 이미지를 깃허브에 같이 올릴 경우)
     st.write("👇 스마트폰 카메라로 스캔하세요!")
     try:
-        st.image("kakao_qr.png", use_column_width=True)
+        st.write("👇 스마트폰 카메라로 스캔하세요!")
+        st.image("https://pf.kakao.com/rocket-web/web/profiles/_xexbLqX/qrcodes/image", use_column_width=True)
     except FileNotFoundError:
         st.caption("QR 코드 이미지를 준비 중입니다.")
