@@ -31,27 +31,27 @@ def get_latest_news(category):
         return f"데이터를 불러오는 중 오류가 발생했습니다: {e}"
 
 # 4. 웹페이지 UI 구성
-
 st.title("🚀 AI Daily Trend Report")
 st.divider() 
 
-# 탭 메뉴
-tab1, tab2, tab3 = st.tabs(["💻 IT/과학", "🎮 게임/e스포츠", "📈 경제/주식"])
+categories = {
+    "경제": "📈", "사회": "👥", "생활/문화": "☕", 
+    "IT/과학": "💻", "게임": "🎮", "세계": "🌍", 
+    "스포츠": "⚽", "건강": "🏥", "엔터테인먼트": "🎬"
+}
+#딕셔너리
+tabs = st.tabs([f"{icon} {cat}" for cat, icon in categories.items()])
 
-with tab1:
-    st.subheader("오늘의 IT/과학 트렌드")
-    it_news = get_latest_news("IT/과학")
-    st.markdown(it_news)
-
-with tab2:
-    st.subheader("오늘의 게임/e스포츠 트렌드")
-    game_news = get_latest_news("게임/e스포츠")
-    st.markdown(game_news)
-
-with tab3:
-    st.subheader("오늘의 경제/주식 트렌드")
-    econ_news = get_latest_news("경제/주식")
-    st.markdown(econ_news)
+for i, (category_name, _) in enumerate(categories.items()):
+    with tabs[i]:
+        st.subheader(f"오늘의 {category_name} 트렌드")
+        
+        if category_name == "IT/과학":
+            st.info("AI가 1분 만에 읽을 수 있도록 요약했습니다.")
+            
+        # DB에서 현재 카테고리 이름과 똑같은 데이터를 꺼내옵니다.
+        news_content = get_latest_news(category_name)
+        st.markdown(news_content)
 
 # 사이드바 (카카오톡 연동 안내)
 with st.sidebar:
