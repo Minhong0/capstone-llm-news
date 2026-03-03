@@ -52,3 +52,20 @@ with tab3:
     st.subheader("오늘의 경제/주식 트렌드")
     econ_news = get_latest_news("경제/주식")
     st.markdown(econ_news)
+
+# 사이드바 (카카오톡 연동 안내)
+with st.sidebar:
+    st.header("📲 카카오톡 챗봇")
+    st.write("웹사이트에 들어올 필요 없이, 카카오톡 챗봇으로 편하게 핵심 트렌드를 받아보세요!")
+    
+    # 1. 예쁜 링크 버튼 만들기 (본인의 채널 URL로 꼭 바꿔주세요!)
+    st.link_button("💬 카카오톡 채널 추가하기", "http://pf.kakao.com/_xexbLqX")
+    
+    st.divider() # 구분선
+    
+    # 2. QR 코드 이미지 띄우기 (다운받은 이미지를 깃허브에 같이 올릴 경우)
+    st.write("👇 스마트폰 카메라로 스캔하세요!")
+    try:
+        st.image("kakao_qr.png", use_column_width=True)
+    except FileNotFoundError:
+        st.caption("QR 코드 이미지를 준비 중입니다.")
