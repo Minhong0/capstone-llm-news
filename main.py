@@ -38,7 +38,7 @@ def summarize_news_with_llm(category, news_text):
     # 프롬프트에 '카테고리' 이름을 넣어서 더 정확한 맞춤형 요약을 유도합니다.
     prompt = f"""
     다음은 오늘 한국의 주요 [{category}] 관련 뉴스 제목들입니다.
-    이 내용들을 종합하여 바쁜 대학생이 아침에 1분 만에 읽을 수 있도록, 
+    아침에 1분 만에 읽을 수 있도록, 
     가장 중요한 트렌드 3가지를 불릿 포인트로 깔끔하게 요약해 주세요.
     
     [뉴스 데이터]
@@ -132,6 +132,7 @@ if __name__ == "__main__":
     # 모든 카테고리를 순회한 후, 하나로 합쳐진 메일 발송!
     if email_content_builder:
         send_email(email_content_builder)
+
 
 
 
