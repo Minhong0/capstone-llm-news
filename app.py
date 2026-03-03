@@ -45,9 +45,6 @@ tabs = st.tabs([f"{icon} {cat}" for cat, icon in categories.items()])
 for i, (category_name, _) in enumerate(categories.items()):
     with tabs[i]:
         st.subheader(f"오늘의 {category_name} 트렌드")
-        
-        if category_name == "IT/과학":
-            st.info("AI가 1분 만에 읽을 수 있도록 요약했습니다.")
             
         # DB에서 현재 카테고리 이름과 똑같은 데이터를 꺼내옵니다.
         news_content = get_latest_news(category_name)
