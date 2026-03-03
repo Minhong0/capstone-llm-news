@@ -42,7 +42,7 @@
 [ User Interface ]
 👤 User ──(Access)──> 🖥️ Streamlit Web Dashboard <──(Select)── 🗄️ Supabase
 👤 User ──(Message)──> 💬 Kakao i Open Builder ──(Webhook)──> ⚡ AWS Lambda <──(Select)── 🗄️ Supabase
-
+```
 <br>
 기술 스택 (Tech Stack)
 Backend & Data
