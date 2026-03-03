@@ -64,4 +64,4 @@ Chatbot Platform: Kakao i Open Builder (카카오톡 오픈빌더)
 <br>
 
 배포 및 링크 (Links)
-- **Web Dashboard:** [웹사이트 바로가기](https://minhongcapstonellm.streamlit.app)
+- **Web Dashboard:** [웹사이트 바로가기](https://injecapstone.streamlit.app/)
