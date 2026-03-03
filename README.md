@@ -42,8 +42,7 @@
 [ User Interface ]
 👤 User ──(Access)──> 🖥️ Streamlit Web Dashboard <──(Select)── 🗄️ Supabase
 👤 User ──(Message)──> 💬 Kakao i Open Builder ──(Webhook)──> ⚡ AWS Lambda <──(Select)── 🗄️ Supabase
-```
-<br>
+
 기술 스택 (Tech Stack)
 Backend & Data
 Language: Python 3.12
@@ -61,6 +60,8 @@ Frontend & Channel
 Web Dashboard: Streamlit
 
 Chatbot Platform: Kakao i Open Builder (카카오톡 오픈빌더)
+```
+<br>
 
 배포 및 링크 (Links)
 - **Web Dashboard:** [웹사이트 바로가기](https://minhongcapstonellm.streamlit.app)
