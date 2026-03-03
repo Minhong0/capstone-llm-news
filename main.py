@@ -102,9 +102,15 @@ def send_email(full_summary_html):
 if __name__ == "__main__":
     # 우리가 원하는 카테고리와 구글 뉴스 검색어(키워드) 세팅
     target_categories = {
-        "IT/과학": "IT기술 OR 인공지능 OR 반도체 OR 과학",
-        "게임/e스포츠": "게임산업 OR e스포츠 OR 신작게임 OR 콘솔게임",
-        "경제/주식": "거시경제 OR 주식시장 OR 기준금리 OR 금융"
+        "경제": "거시경제 OR 주식시장 OR 기준금리 OR 부동산",
+        "사회": "사회 뉴스 OR 정책 OR 교육 OR 복지",
+        "생활/문화": "생활 정보 OR 문화 전시 OR 트렌드 OR 라이프스타일",
+        "IT/과학": "IT기술 OR 인공지능 OR 반도체 OR 우주과학",
+        "게임": "게임산업 OR e스포츠 OR 신작게임 OR 콘솔게임",
+        "세계": "국제 뉴스 OR 글로벌 트렌드 OR 외교 OR 세계 경제",
+        "스포츠": "스포츠 뉴스 OR 올림픽 OR 프로야구 OR 축구 해외파",
+        "건강": "건강 정보 OR 의학 뉴스 OR 헬스케어 OR 영양",
+        "엔터테인먼트": "영화 개봉 OR K팝 OR 드라마 흥행 OR 연예기획사"
     }
     
     email_content_builder = "" # 메일 한 통에 다 담기 위해 빈 텍스트 준비
@@ -126,5 +132,6 @@ if __name__ == "__main__":
     # 모든 카테고리를 순회한 후, 하나로 합쳐진 메일 발송!
     if email_content_builder:
         send_email(email_content_builder)
+
 
 
