@@ -42,3 +42,21 @@
 [ User Interface ]
 👤 User ──(Access)──> 🖥️ Streamlit Web Dashboard <──(Select)── 🗄️ Supabase
 👤 User ──(Message)──> 💬 Kakao i Open Builder ──(Webhook)──> ⚡ AWS Lambda <──(Select)── 🗄️ Supabase
+
+🛠️ 기술 스택 (Tech Stack)
+Backend & Data
+Language: Python 3.12
+
+Database: Supabase (PostgreSQL) - REST API 기반 데이터 연동
+
+AI Model: Google Gemini API
+
+Infrastructure & Automation
+Serverless Compute: AWS Lambda, Amazon API Gateway
+
+CI/CD & Automation: GitHub Actions (CRON Scheduler)
+
+Frontend & Channel
+Web Dashboard: Streamlit
+
+Chatbot Platform: Kakao i Open Builder (카카오톡 오픈빌더)
