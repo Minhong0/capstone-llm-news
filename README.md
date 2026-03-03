@@ -12,7 +12,7 @@
 
 <br>
 
-## 🚀 프로젝트 개요 (Project Overview)
+## 프로젝트 개요 (Project Overview)
 
 바쁜 현대인을 위해 매일 쏟아지는 방대한 양의 뉴스를 구글 뉴스 크롤링을 통해 수집하고, LLM(Gemini API)을 활용해 1분 만에 읽을 수 있도록 핵심만 요약하여 제공합니다. 
 
@@ -20,16 +20,16 @@
 
 <br>
 
-## ✨ 핵심 기능 (Key Features)
+## 핵심 기능 (Key Features)
 
-- **🤖 AI 기반 맞춤형 뉴스 요약:** 경제, IT/과학, 사회 등 총 9개 카테고리의 최신 트렌드를 AI가 읽기 쉽게 요약.
-- **🕒 100% 무인 자동화 파이프라인:** GitHub Actions의 CRON 스케줄러를 통해 매일 정해진 시간에 크롤링 ➡️ 요약 ➡️ DB 적재 과정을 자동으로 수행.
-- **💬 카카오톡 챗봇 연동 (Quick Replies):** 웹사이트에 접속할 필요 없이, 카카오톡 챗봇 메뉴와 폴백(Fallback) 블록을 통해 사용자가 원하는 분야의 뉴스를 즉시 제공.
-- **📊 시각화된 웹 대시보드:** Streamlit을 활용하여 누구나 쉽게 접근하고 읽을 수 있는 반응형 프론트엔드 UI 제공.
+- **AI 기반 맞춤형 뉴스 요약:** 경제, IT/과학, 사회 등 총 9개 카테고리의 최신 트렌드를 AI가 읽기 쉽게 요약.
+- **100% 무인 자동화 파이프라인:** GitHub Actions의 CRON 스케줄러를 통해 매일 정해진 시간에 크롤링 ➡️ 요약 ➡️ DB 적재 과정을 자동으로 수행.
+- **카카오톡 챗봇 연동 (Quick Replies):** 웹사이트에 접속할 필요 없이, 카카오톡 챗봇 메뉴와 폴백(Fallback) 블록을 통해 사용자가 원하는 분야의 뉴스를 즉시 제공.
+- **시각화된 웹 대시보드:** Streamlit을 활용하여 누구나 쉽게 접근하고 읽을 수 있는 반응형 프론트엔드 UI 제공.
 
 <br>
 
-## 🏗️ 시스템 아키텍처 (System Architecture)
+## 시스템 아키텍처 (System Architecture)
 
 본 프로젝트는 클라우드 네이티브 및 서버리스(Serverless) 환경을 기반으로 구축되었습니다.
 
@@ -43,7 +43,7 @@
 👤 User ──(Access)──> 🖥️ Streamlit Web Dashboard <──(Select)── 🗄️ Supabase
 👤 User ──(Message)──> 💬 Kakao i Open Builder ──(Webhook)──> ⚡ AWS Lambda <──(Select)── 🗄️ Supabase
 
-🛠️ 기술 스택 (Tech Stack)
+기술 스택 (Tech Stack)
 Backend & Data
 Language: Python 3.12
 
