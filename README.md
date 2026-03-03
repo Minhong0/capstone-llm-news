@@ -62,4 +62,4 @@ Web Dashboard: Streamlit
 Chatbot Platform: Kakao i Open Builder (카카오톡 오픈빌더)
 
 배포 및 링크 (Links)
-링크 : [https://injecapstone.streamlit.app/]
+링크 : (https://injecapstone.streamlit.app/)
